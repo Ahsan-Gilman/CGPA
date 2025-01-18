@@ -96,7 +96,7 @@
             const requiredGpa = ((targetCgpa * totalCredits) - (currentCgpa * currentCredits)) / nextCredits;
 
             if (requiredGpa > 4 || requiredGpa < 0) {
-                document.getElementById('requiredGpaResult').innerText = "It is not possible to achieve this CGPA with the provided data.";
+                document.getElementById('requiredGpaResult').innerText = "It is not possible to achieve this CGPA in this term.";
             } else {
                 document.getElementById('requiredGpaResult').innerText = `You need a GPA of ${requiredGpa.toFixed(3)} in this term to achieve an overall CGPA of ${targetCgpa}.`;
             }
