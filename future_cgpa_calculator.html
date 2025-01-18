@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next CGPA Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 90%;
+            width: 400px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        label {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .remove-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            width: auto;
+        }
+        .remove-btn:hover {
+            background-color: #c0392b;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            white-space: pre-line;
+        }
+        footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 10px;
+            background-color: #f4f4f9;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Future CGPA Calculator</h1>
+        <form id="nextCgpaForm">
+            <h2>Current CGPA</h2>
+            <div class="form-group">
+                <label for="currentCgpa">Current CGPA:</label>
+                <input type="number" id="currentCgpa" name="currentCgpa" step="0.001" min="0" max="4" required>
+            </div>
+            <div class="form-group">
+                <label for="currentCredits">Total Completed Credit Hours:</label>
+                <input type="number" id="currentCredits" name="currentCredits" min="1" required>
+            </div>
+
+            <h2>Next Terms</h2>
+            <div id="nextTermsContainer">
+                <div class="form-group-inline" id="nextTerm1">
+                    <div class="form-group">
+                        <label for="nextGpa1">Expected GPA for Term 1:</label>
+                        <input type="number" id="nextGpa1" name="nextGpa[]" step="0.001" min="0" max="4" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nextCredit1">Credit Hours:</label>
+                        <input type="number" id="nextCredit1" name="nextCredit[]" min="1" required>
+                    </div>
+                    <button type="button" class="remove-btn" onclick="removeNextTerm('nextTerm1')">Remove</button>
+                </div>
+            </div>
+            <button type="button" onclick="addNextTerm()">Add Another Term</button>
+            <button type="button" onclick="calculateNextCgpa()">Calculate Next CGPA</button>
+        </form>
+        <div class="result" id="nextResult"></div>
+    </div>
+
+    <footer>
+        Prepared by --- AHSAN GILMAN
+    </footer>
+
+    <script>
+        let nextTermCount = 1;
+
+        function addNextTerm() {
+            nextTermCount++;
+            const container = document.getElementById('nextTermsContainer');
+
+            const termDiv = document.createElement('div');
+            termDiv.className = 'form-group-inline';
+            termDiv.id = `nextTerm${nextTermCount}`;
+
+            termDiv.innerHTML = `
+                <div class="form-group">
+                    <label for="nextGpa${nextTermCount}">Expected GPA for Term ${nextTermCount}:</label>
+                    <input type="number" id="nextGpa${nextTermCount}" name="nextGpa[]" step="0.001" min="0" max="4" required>
+                </div>
+                <div class="form-group">
+                    <label for="nextCredit${nextTermCount}">Credit Hours:</label>
+                    <input type="number" id="nextCredit${nextTermCount}" name="nextCredit[]" min="1" required>
+                </div>
+                <button type="button" class="remove-btn" onclick="removeNextTerm('nextTerm${nextTermCount}')">Remove</button>
+            `;
+            container.appendChild(termDiv);
+        }
+
+        function removeNextTerm(termId) {
+            const termDiv = document.getElementById(termId);
+            termDiv.parentNode.removeChild(termDiv);
+        }
+
+        function calculateNextCgpa() {
+            const nextGpaInputs = document.querySelectorAll('input[name="nextGpa[]"]');
+            const nextCreditInputs = document.querySelectorAll('input[name="nextCredit[]"]');
+
+            let nextTotalGradePoints = 0;
+            let nextTotalCredits = 0;
+
+            for (let i = 0; i < nextGpaInputs.length; i++) {
+                const gpa = parseFloat(nextGpaInputs[i].value);
+                const credit = parseFloat(nextCreditInputs[i].value);
+
+                nextTotalGradePoints += gpa * credit;
+                nextTotalCredits += credit;
+            }
+
+            const currentCgpa = parseFloat(document.getElementById('currentCgpa').value);
+            const currentCredits = parseFloat(document.getElementById('currentCredits').value);
+
+            const overallNextGradePoints = nextTotalGradePoints + (currentCgpa * currentCredits);
+            const overallNextCredits = nextTotalCredits + currentCredits;
+            const nextCgpa = (overallNextGradePoints / overallNextCredits).toFixed(3);
+
+            document.getElementById('nextResult').innerText = `Next CGPA: ${nextCgpa}`;
+        }
+    </script>
+</body>
+</html>

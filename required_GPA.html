@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Required GPA Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            width: 90%;
+            background: white;
+            padding: 20px 20px; /* Added equal padding for left and right */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input {
+            width: calc(100% - 20px); /* Account for container padding */
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f4f4f9;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Required GPA Calculator</h1>
+        <form id="requiredGpaForm">
+            <label for="currentCgpa">Current CGPA:</label>
+            <input type="number" id="currentCgpa" step="0.001" min="0" max="4" required>
+            
+            <label for="currentCredits">Total Completed Credit Hours:</label>
+            <input type="number" id="currentCredits" min="1" required>
+            
+            <label for="targetCgpa">Desired Overall CGPA:</label>
+            <input type="number" id="targetCgpa" step="0.001" min="0" max="4" required>
+            
+            <label for="nextCredits">Next Term Credit Hours:</label>
+            <input type="number" id="nextCredits" min="1" required>
+            
+            <button type="button" onclick="calculateRequiredGpa()">Calculate Required GPA</button>
+        </form>
+        <div class="result" id="requiredGpaResult"></div>
+    </div>
+
+    <footer>
+        Prepared by --- AHSAN GILMAN
+    </footer>
+
+    <script>
+        function calculateRequiredGpa() {
+            const currentCgpa = parseFloat(document.getElementById('currentCgpa').value);
+            const currentCredits = parseFloat(document.getElementById('currentCredits').value);
+            const targetCgpa = parseFloat(document.getElementById('targetCgpa').value);
+            const nextCredits = parseFloat(document.getElementById('nextCredits').value);
+
+            const totalCredits = currentCredits + nextCredits;
+            const requiredGpa = ((targetCgpa * totalCredits) - (currentCgpa * currentCredits)) / nextCredits;
+
+            if (requiredGpa > 4 || requiredGpa < 0) {
+                document.getElementById('requiredGpaResult').innerText = "It is not possible to achieve this CGPA with the provided data.";
+            } else {
+                document.getElementById('requiredGpaResult').innerText = `You need a GPA of ${requiredGpa.toFixed(3)} in the next term to achieve an overall CGPA of ${targetCgpa}.`;
+            }
+        }
+    </script>
+</body>
+</html>

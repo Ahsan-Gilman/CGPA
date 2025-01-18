@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 90%;
+            width: 400px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        label {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .remove-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            width: auto;
+        }
+        .remove-btn:hover {
+            background-color: #c0392b;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            white-space: pre-line; /* Ensure line breaks display correctly */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CGPA Calculator</h1>
+        <form id="cgpaForm">
+            <h2>This Term</h2>
+            <div id="termSubjectContainer">
+                <div class="form-group-inline" id="termSubject1">
+                    <div class="form-group">
+                        <label for="termGpa1">Subject 1 GPA:</label>
+                        <input type="number" id="termGpa1" name="termGpa[]" step="0.001" min="0" max="4" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="termCredit1">Credit:</label>
+                        <input type="number" id="termCredit1" name="termCredit[]" min="1" required>
+                    </div>
+                    <button type="button" class="remove-btn" onclick="removeSubject('termSubject1')">Remove</button>
+                </div>
+            </div>
+            <button type="button" onclick="addTermSubject()">Add Another Subject</button>
+
+            <h2>Previous CGPA</h2>
+            <div class="form-group">
+                <label for="prevCgpa">Previous CGPA:</label>
+                <input type="number" id="prevCgpa" name="prevCgpa" step="0.001" min="0" max="4" required>
+            </div>
+            <div class="form-group">
+                <label for="prevCredits">Total Previous Credit Hours:</label>
+                <input type="number" id="prevCredits" name="prevCredits" min="1" required>
+            </div>
+
+            <button type="submit">Calculate CGPA</button>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        let termSubjectCount = 1;
+
+        function addTermSubject() {
+            termSubjectCount++;
+            const container = document.getElementById('termSubjectContainer');
+
+            const subjectDiv = document.createElement('div');
+            subjectDiv.className = 'form-group-inline';
+            subjectDiv.id = `termSubject${termSubjectCount}`;
+
+            subjectDiv.innerHTML = `
+                <div class="form-group">
+                    <label for="termGpa${termSubjectCount}">Subject ${termSubjectCount} GPA:</label>
+                    <input type="number" id="termGpa${termSubjectCount}" name="termGpa[]" step="0.001" min="0" max="4" required>
+                </div>
+                <div class="form-group">
+                    <label for="termCredit${termSubjectCount}">Credit:</label>
+                    <input type="number" id="termCredit${termSubjectCount}" name="termCredit[]" min="1" required>
+                </div>
+                <button type="button" class="remove-btn" onclick="removeSubject('termSubject${termSubjectCount}')">Remove</button>
+            `;
+            container.appendChild(subjectDiv);
+        }
+
+        function removeSubject(subjectId) {
+            const subjectDiv = document.getElementById(subjectId);
+            subjectDiv.parentNode.removeChild(subjectDiv);
+        }
+
+        document.getElementById('cgpaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const termGpaInputs = document.querySelectorAll('input[name="termGpa[]"]');
+            const termCreditInputs = document.querySelectorAll('input[name="termCredit[]"]');
+
+            let termTotalGradePoints = 0;
+            let termTotalCredits = 0;
+
+            for (let i = 0; i < termGpaInputs.length; i++) {
+                const gpa = parseFloat(termGpaInputs[i].value);
+                const credit = parseFloat(termCreditInputs[i].value);
+
+                termTotalGradePoints += gpa * credit;
+                termTotalCredits += credit;
+            }
+
+            const termGpa = (termTotalGradePoints / termTotalCredits).toFixed(3);
+
+            const prevCgpa = parseFloat(document.getElementById('prevCgpa').value);
+            const prevCredits = parseFloat(document.getElementById('prevCredits').value);
+
+            const overallTotalGradePoints = termTotalGradePoints + (prevCgpa * prevCredits);
+            const overallTotalCredits = termTotalCredits + prevCredits;
+            const overallCgpa = (overallTotalGradePoints / overallTotalCredits).toFixed(3);
+
+            document.getElementById('result').innerText = `This Term GPA: ${termGpa}\nOverall CGPA: ${overallCgpa}`;
+        });
+    </script>
+</body>
+</html>
