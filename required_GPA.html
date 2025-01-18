@@ -73,7 +73,7 @@
             <label for="targetCgpa">Desired Overall CGPA:</label>
             <input type="number" id="targetCgpa" step="0.001" min="0" max="4" required>
             
-            <label for="nextCredits">Next Term Credit Hours:</label>
+            <label for="nextCredits">This Term Credit Hours:</label>
             <input type="number" id="nextCredits" min="1" required>
             
             <button type="button" onclick="calculateRequiredGpa()">Calculate Required GPA</button>
@@ -98,7 +98,7 @@
             if (requiredGpa > 4 || requiredGpa < 0) {
                 document.getElementById('requiredGpaResult').innerText = "It is not possible to achieve this CGPA with the provided data.";
             } else {
-                document.getElementById('requiredGpaResult').innerText = `You need a GPA of ${requiredGpa.toFixed(3)} in the next term to achieve an overall CGPA of ${targetCgpa}.`;
+                document.getElementById('requiredGpaResult').innerText = `You need a GPA of ${requiredGpa.toFixed(3)} in this term to achieve an overall CGPA of ${targetCgpa}.`;
             }
         }
     </script>
